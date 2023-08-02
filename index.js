@@ -24,6 +24,11 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/", (req, res) => {
+  res.json({
+    message: "Bienvenue sur l'api d'authentification"
+  })
+})
 app.use("/api/auth", login)
 app.use("/api/auth", register)
 app.use("/api/user", authMiddleware, profile)
