@@ -1,24 +1,22 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const authMiddleware = require("./middleware/authMiddleware");
-const login = require("./api/auth/login");
-const register = require("./api/auth/register");
-const profile = require("./api/user/profile");
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 const colors = require("colors");
 const cors = require("cors");
 const helmet = require("helmet");
-require("dotenv").config();
-
+const config = require("./config");
 
 mongoose
-  .connect(process.env.MONGODB_URI, {
+  .connect(config.db.url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log(`Connected to MongoDB`.bgYellow.italic.bold))
   .catch((error) => console.error("Error connecting to MongoDB: ", error));
 
-const app = express()
+const app = express();
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
@@ -26,11 +24,14 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.json({
-    message: "Bienvenue sur l'api d'authentification"
-  })
-})
-app.use("/api/auth", login)
-app.use("/api/auth", register)
-app.use("/api/user", authMiddleware, profile)
+    message: "Bienvenue sur l'api d'authentification",
+  });
+});
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+
+app.listen(config.port, () => {
+  console.log(`Server is running on port ${config.port}`.blue.bold);
+});
 
 module.exports = app;

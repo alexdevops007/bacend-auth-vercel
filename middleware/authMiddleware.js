@@ -1,9 +1,8 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
-const jwtSecret = process.env.JWT_SECRET;
+const config = require("../config")
 
 function authMiddleware(req, res, next) {
-  const token = req.header("Authorization");
+  const token = req.header("x-auth-token");
 
   if (!token) {
     return res
@@ -12,8 +11,8 @@ function authMiddleware(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, jwtSecret);
-    req.user = decoded;
+    const decoded = jwt.verify(token, config.secret);
+    req.user = decoded.user;
     next();
   } catch (error) {
     return res.status(401).json({ message: "Le token n'est pas valide" });

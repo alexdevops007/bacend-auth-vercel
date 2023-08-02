@@ -1,8 +1,8 @@
 const express = require("express");
+const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
-router.get("/profile", (req, res) => {
-  // Renvoir les infos de profil de l'utilisateur
+router.get("/profile", authMiddleware, (req, res) => {
   res.json({ user: req.user });
 });
 
